@@ -1,0 +1,74 @@
+# ══════════════════════════════════════════════════════════════
+#  CHARAMOU AI v3 — Requirements
+#  [REQUIS] = obligatoire  [OPT] = améliore les fonctionnalités
+# ══════════════════════════════════════════════════════════════
+
+# ── Sécurité ─────────────────────────────────────────────────
+cryptography>=42.0.0       # [REQUIS] Vault AES chiffré
+
+# ── Voix & Audio ─────────────────────────────────────────────
+SpeechRecognition>=3.10.0  # [REQUIS] Reconnaissance vocale
+pyttsx3>=2.90              # [REQUIS] Synthèse vocale offline
+pyaudio>=0.2.13            # [REQUIS] Accès microphone
+pvporcupine>=3.0.0         # [OPT]   Wake word haute précision
+openai-whisper>=20231117   # [OPT]   STT local Whisper
+
+# ── NLP & IA ─────────────────────────────────────────────────
+openai>=1.12.0             # [OPT]   GPT-4o-mini cloud
+requests>=2.31.0           # [REQUIS] Ollama + APIs REST
+langdetect>=1.0.9          # [OPT]   Détection automatique langue
+
+# ── Mémoire sémantique ────────────────────────────────────────
+# TF-IDF inclus (zéro dépendance, ~5000 docs)
+chromadb>=0.4.0            # [OPT]   100k+ docs, persistant
+# faiss-cpu>=1.7.4         # [OPT]   Millions de docs (Linux/macOS)
+# sentence-transformers>=2.5.0  # [OPT] Embeddings neuronaux
+
+# ── Automatisation bureau ─────────────────────────────────────
+pyautogui>=0.9.54          # [REQUIS] Contrôle souris/clavier
+keyboard>=0.13.5           # [OPT]   Raccourcis clavier
+pywin32>=306               # [OPT]   Windows COM (Office avancé)
+python-docx>=1.1.0         # [REQUIS] Création/lecture Word
+openpyxl>=3.1.2            # [REQUIS] Lecture/écriture Excel
+python-pptx>=0.6.23        # [REQUIS] Lecture/écriture PowerPoint
+selenium>=4.18.0           # [OPT]   Automatisation navigateur avancée
+
+# ── Vision & OCR ─────────────────────────────────────────────
+Pillow>=10.2.0             # [REQUIS] Capture écran, images
+pytesseract>=0.3.10        # [OPT]   OCR (Tesseract doit être installé)
+opencv-python>=4.9.0       # [OPT]   Vision / détection boutons
+easyocr>=1.7.0             # [OPT]   OCR alternatif (meilleure précision)
+numpy>=1.26.4              # [REQUIS] Calcul numérique
+
+# ── Base de connaissances (RAG) ───────────────────────────────
+PyPDF2>=3.0.1              # [REQUIS] Lecture PDF (fallback)
+pdfplumber>=0.10.0         # [OPT]   Lecture PDF (meilleure qualité)
+# xlrd>=2.0.1              # [OPT]   Lecture .xls (ancien format)
+
+# ── Services & API ────────────────────────────────────────────
+google-auth>=2.28.0        # [OPT]   Google Calendar
+google-auth-oauthlib>=1.2.0
+google-api-python-client>=2.120.0
+newsapi-python>=0.2.7      # [OPT]   Actualités
+
+# ── Utilitaires ──────────────────────────────────────────────
+python-dotenv>=1.0.1       # [REQUIS] Variables d'environnement
+schedule>=1.2.1            # [REQUIS] Tâches planifiées
+psutil>=5.9.8              # [REQUIS] Monitoring système
+SQLAlchemy>=2.0.28         # [OPT]   ORM base de données
+
+# ── Interface ────────────────────────────────────────────────
+customtkinter>=5.2.2       # [REQUIS] GUI Dashboard Jarvis
+rich>=13.7.1               # [OPT]   CLI coloré amélioré
+fastapi>=0.110.0           # [OPT]   API REST
+uvicorn>=0.28.0            # [OPT]   Serveur API
+websockets>=12.0           # [OPT]   Temps réel
+
+# ── Notifications Windows ─────────────────────────────────────
+win10toast>=0.9            # [OPT]   Notifications bureau Windows
+
+# ── Packaging ────────────────────────────────────────────────
+PyInstaller>=6.4.0         # [OPT]   Build .exe autonome
+
+# ── Tests ────────────────────────────────────────────────────
+pytest>=8.0.0              # [DEV]   Tests unitaires

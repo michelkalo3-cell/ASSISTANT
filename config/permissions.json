@@ -1,0 +1,16 @@
+{
+  "allow_shutdown": false,
+  "allow_restart": false,
+  "allow_delete_files": false,
+  "allow_browser_control": true,
+  "allow_word_control": true,
+  "allow_excel_control": true,
+  "allow_email_send": false,
+  "allow_system_volume": true,
+  "allow_screenshot": true,
+  "allow_keyboard_control": true,
+  "allow_mouse_control": true,
+  "allow_process_kill": false,
+  "allow_internet_access": true,
+  "require_confirmation_for": ["shutdown", "delete_files", "send_email"]
+}

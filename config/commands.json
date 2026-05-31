@@ -1,0 +1,60 @@
+{
+  "commands": {
+    "OPEN_APPLICATION": {
+      "keywords": ["ouvre", "lance", "démarre", "ouvrir", "lancer"],
+      "examples": ["ouvre Word", "lance Chrome", "démarre Excel"]
+    },
+    "CLOSE_APPLICATION": {
+      "keywords": ["ferme", "quitte", "arrête", "fermer"],
+      "examples": ["ferme Word", "quitte Chrome"]
+    },
+    "GET_WEATHER": {
+      "keywords": ["météo", "temps", "température", "il fait", "quel temps"],
+      "examples": ["quelle est la météo", "quel temps fait-il à Paris"]
+    },
+    "SET_REMINDER": {
+      "keywords": ["rappelle", "rappel", "alarme", "souviens"],
+      "examples": ["rappelle-moi à 15h", "crée un rappel pour demain"]
+    },
+    "SEARCH_WEB": {
+      "keywords": ["cherche", "recherche", "google", "trouve", "qu'est-ce que"],
+      "examples": ["cherche Python sur Google", "recherche la tour Eiffel"]
+    },
+    "WRITE_DOCUMENT": {
+      "keywords": ["écris", "rédige", "crée un document", "nouveau fichier Word"],
+      "examples": ["écris une lettre", "crée un document Word"]
+    },
+    "READ_EMAILS": {
+      "keywords": ["emails", "mail", "courrier", "messages"],
+      "examples": ["lis mes emails", "vérifie mes mails"]
+    },
+    "PLAY_MUSIC": {
+      "keywords": ["musique", "joue", "écouter", "spotify"],
+      "examples": ["joue de la musique", "lance Spotify"]
+    },
+    "SYSTEM_VOLUME": {
+      "keywords": ["volume", "son", "silence", "muet", "monte", "baisse"],
+      "examples": ["monte le volume", "mets en silence"]
+    },
+    "TAKE_SCREENSHOT": {
+      "keywords": ["capture", "screenshot", "photo écran"],
+      "examples": ["fais une capture d'écran"]
+    },
+    "GET_NEWS": {
+      "keywords": ["actualités", "news", "nouvelles", "infos"],
+      "examples": ["donne-moi les actualités", "quelles sont les nouvelles"]
+    },
+    "TRANSLATE": {
+      "keywords": ["traduis", "traduction", "en anglais", "en français"],
+      "examples": ["traduis bonjour en anglais"]
+    },
+    "SYSTEM_SHUTDOWN": {
+      "keywords": ["éteins", "arrête l'ordinateur", "shutdown"],
+      "examples": ["éteins l'ordinateur"]
+    },
+    "CONVERSATION": {
+      "keywords": [],
+      "examples": ["dis-moi quelque chose", "comment vas-tu"]
+    }
+  }
+}

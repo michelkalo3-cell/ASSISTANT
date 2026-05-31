@@ -1,0 +1,16 @@
+{
+  "tts_engine": "pyttsx3",
+  "tts_rate": 175,
+  "tts_volume": 0.9,
+  "tts_voice_id": null,
+  "stt_engine": "google",
+  "stt_language": "fr-FR",
+  "stt_timeout": 5,
+  "stt_phrase_time_limit": 10,
+  "wake_word": "charamou",
+  "wake_word_engine": "porcupine",
+  "noise_reduction": true,
+  "energy_threshold": 300,
+  "dynamic_energy": true,
+  "microphone_index": null
+}

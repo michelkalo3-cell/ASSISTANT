@@ -1,0 +1,44 @@
+# Environnements Python
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.spec
+
+# Secrets et config locale
+.env
+config/credentials.json
+data/token.pickle
+
+# Bases de données
+database/*.db
+
+# Logs
+logs/*.log
+
+# Données temporaires
+data/cache/
+data/temp/
+data/models/
+data/training/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Screenshots générées
+*.png
+!interfaces/gui/assets/*.png

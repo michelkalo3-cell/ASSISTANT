@@ -1,0 +1,74 @@
+"""
+CHARAMOU AI - Système de logging centralisé v2
+Un fichier de log par domaine + rotation automatique.
+"""
+import logging
+import logging.handlers
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent.parent
+LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR.mkdir(exist_ok=True)
+
+_LOGGERS: dict = {}
+
+_DOMAIN_FILES = {
+    "voice":    "voice.log",
+    "ai":       "ai.log",
+    "system":   "system.log",
+    "security": "security.log",
+    "errors":   "errors.log",
+    "activity": "activity.log",
+}
+
+def setup_logger(name: str, level: str = "INFO") -> logging.Logger:
+    if name in _LOGGERS:
+        return _LOGGERS[name]
+
+    numeric_level = getattr(logging, level.upper(), logging.INFO)
+    logger = logging.getLogger(name)
+    logger.setLevel(numeric_level)
+
+    if logger.handlers:
+        _LOGGERS[name] = logger
+        return logger
+
+    fmt = logging.Formatter(
+        "[%(asctime)s] [%(levelname)-8s] [%(name)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+
+    def make_handler(filename: str, level=logging.DEBUG) -> logging.handlers.RotatingFileHandler:
+        h = logging.handlers.RotatingFileHandler(
+            LOGS_DIR / filename,
+            maxBytes=5 * 1024 * 1024,
+            backupCount=5,
+            encoding="utf-8"
+        )
+        h.setLevel(level)
+        h.setFormatter(fmt)
+        return h
+
+    # Console
+    ch = logging.StreamHandler()
+    ch.setLevel(numeric_level)
+    ch.setFormatter(fmt)
+    logger.addHandler(ch)
+
+    # Fichier activité global
+    logger.addHandler(make_handler("activity.log", logging.INFO))
+
+    # Fichier erreurs global
+    logger.addHandler(make_handler("errors.log", logging.ERROR))
+
+    # Fichier domaine spécifique
+    name_lower = name.lower()
+    for domain, fname in _DOMAIN_FILES.items():
+        if domain in name_lower:
+            logger.addHandler(make_handler(fname, logging.DEBUG))
+            break
+
+    _LOGGERS[name] = logger
+    return logger
+
+logger = setup_logger("CHARAMOU")
