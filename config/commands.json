@@ -40,6 +40,10 @@
       "keywords": ["capture", "screenshot", "photo écran"],
       "examples": ["fais une capture d'écran"]
     },
+    "GET_SYSTEM_STATUS": {
+      "keywords": ["état du système", "système", "cpu", "ram", "mémoire", "batterie"],
+      "examples": ["quel est l'état du système", "cpu et mémoire"]
+    },
     "GET_NEWS": {
       "keywords": ["actualités", "news", "nouvelles", "infos"],
       "examples": ["donne-moi les actualités", "quelles sont les nouvelles"]

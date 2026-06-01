@@ -27,12 +27,19 @@ class AuditLogger:
         self._log = logging.getLogger("AuditLogger")
         self._log.setLevel(logging.DEBUG)
         if not self._log.handlers:
-            h = logging.handlers.RotatingFileHandler(
-                AUDIT_LOG_PATH, maxBytes=2*1024*1024, backupCount=5, encoding="utf-8"
-            ) if hasattr(logging, 'handlers') else logging.FileHandler(AUDIT_LOG_PATH)
-            import logging.handlers as lh
-            h = lh.RotatingFileHandler(AUDIT_LOG_PATH, maxBytes=2*1024*1024, backupCount=5, encoding="utf-8")
-            h.setFormatter(logging.Formatter("[%(asctime)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"))
+            try:
+                import logging.handlers as lh
+                with open(AUDIT_LOG_PATH, "a", encoding="utf-8"):
+                    pass
+                h = lh.RotatingFileHandler(
+                    AUDIT_LOG_PATH,
+                    maxBytes=2*1024*1024,
+                    backupCount=5,
+                    encoding="utf-8"
+                )
+                h.setFormatter(logging.Formatter("[%(asctime)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"))
+            except OSError:
+                h = logging.NullHandler()
             self._log.addHandler(h)
 
     def log(self, action: str, status: str, detail: str = "") -> None:

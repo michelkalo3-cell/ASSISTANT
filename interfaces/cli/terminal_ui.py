@@ -46,7 +46,11 @@ def run_cli():
 
     # Init modules sans boucle principale
     engine._init_modules()
+    engine._init_agents()
     engine._register_routes()
+    engine._subscribe_events()
+    engine._register_health_checks()
+    engine.scheduler.start()
 
     if use_rich:
         console.print(f"[green]✅ {engine.name} prêt ![/green]\n")
@@ -54,8 +58,8 @@ def run_cli():
         print(f"✅ {engine.name} prêt !\n")
 
     # Boucle CLI
-    while True:
-        try:
+    try:
+        while True:
             if use_rich:
                 user_input = console.input("[bold blue]Vous[/bold blue] → ").strip()
             else:
@@ -78,11 +82,12 @@ def run_cli():
 
             response = engine.process_input(user_input)
 
-        except KeyboardInterrupt:
-            print("\nInterruption — au revoir !")
-            break
-        except EOFError:
-            break
+    except KeyboardInterrupt:
+        print("\nInterruption — au revoir !")
+    except EOFError:
+        pass
+    finally:
+        engine.shutdown()
 
 
 if __name__ == "__main__":

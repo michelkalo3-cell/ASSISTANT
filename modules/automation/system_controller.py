@@ -54,11 +54,35 @@ class SystemController:
 
         return self.open_application(app_name)
 
+    def handle_status(self, entities: dict = None, context=None) -> str:
+        try:
+            import psutil
+            cpu = psutil.cpu_percent(interval=0)
+            ram = psutil.virtual_memory()
+            disk = psutil.disk_usage("/")
+            parts = [
+                f"CPU : {cpu:.0f}%",
+                f"RAM : {ram.percent:.0f}%",
+                f"Disque : {disk.percent:.0f}%",
+            ]
+            battery = psutil.sensors_battery()
+            if battery:
+                state = "en charge" if battery.power_plugged else "sur batterie"
+                parts.append(f"Batterie : {battery.percent:.0f}% ({state})")
+            return "État système : " + " | ".join(parts)
+        except ImportError:
+            return "psutil n'est pas installé. Exécutez : pip install psutil"
+        except Exception as e:
+            logger.error(f"Erreur état système : {e}")
+            return "Impossible de lire l'état du système."
+
     def open_application(self, app_name: str) -> str:
         app_lower = app_name.lower().strip()
         executable = APP_MAP.get(app_lower, app_lower)
 
         try:
+            if self.security:
+                self.security.validate_app(app_lower)
             if platform.system() == "Windows":
                 os.startfile(executable)
             else:

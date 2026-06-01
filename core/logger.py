@@ -8,7 +8,10 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.parent
 LOGS_DIR = BASE_DIR / "logs"
-LOGS_DIR.mkdir(exist_ok=True)
+try:
+    LOGS_DIR.mkdir(exist_ok=True)
+except OSError:
+    pass
 
 _LOGGERS: dict = {}
 
@@ -38,13 +41,19 @@ def setup_logger(name: str, level: str = "INFO") -> logging.Logger:
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-    def make_handler(filename: str, level=logging.DEBUG) -> logging.handlers.RotatingFileHandler:
-        h = logging.handlers.RotatingFileHandler(
-            LOGS_DIR / filename,
-            maxBytes=5 * 1024 * 1024,
-            backupCount=5,
-            encoding="utf-8"
-        )
+    def make_handler(filename: str, level=logging.DEBUG):
+        path = LOGS_DIR / filename
+        try:
+            with open(path, "a", encoding="utf-8"):
+                pass
+            h = logging.handlers.RotatingFileHandler(
+                path,
+                maxBytes=5 * 1024 * 1024,
+                backupCount=5,
+                encoding="utf-8"
+            )
+        except OSError:
+            return None
         h.setLevel(level)
         h.setFormatter(fmt)
         return h
@@ -56,16 +65,22 @@ def setup_logger(name: str, level: str = "INFO") -> logging.Logger:
     logger.addHandler(ch)
 
     # Fichier activité global
-    logger.addHandler(make_handler("activity.log", logging.INFO))
+    activity_handler = make_handler("activity.log", logging.INFO)
+    if activity_handler:
+        logger.addHandler(activity_handler)
 
     # Fichier erreurs global
-    logger.addHandler(make_handler("errors.log", logging.ERROR))
+    error_handler = make_handler("errors.log", logging.ERROR)
+    if error_handler:
+        logger.addHandler(error_handler)
 
     # Fichier domaine spécifique
     name_lower = name.lower()
     for domain, fname in _DOMAIN_FILES.items():
         if domain in name_lower:
-            logger.addHandler(make_handler(fname, logging.DEBUG))
+            domain_handler = make_handler(fname, logging.DEBUG)
+            if domain_handler:
+                logger.addHandler(domain_handler)
             break
 
     _LOGGERS[name] = logger

@@ -48,9 +48,9 @@ class AssistantEngine:
         self.context  = ContextManager(max_history=self.config.get("max_conversation_history", 20))
         self.memory   = MemoryManager()
         self.router   = TaskRouter()
-        self.registry = ActionRegistry()
         self.scheduler = Scheduler()
         self.security  = SecurityManager()
+        self.registry = ActionRegistry(security=self.security)
         self.plugins   = PluginManager(engine=self)
 
         # ── Surveillance ─────────────────────────────────────────────────────
@@ -223,6 +223,7 @@ class AssistantEngine:
         self.registry.register("OPEN_APPLICATION",  system.handle_open, "Ouvrir une application",  "automation", ["ouvre","lance"],    requires=["browser_control"])
         self.registry.register("SYSTEM_VOLUME",     system.handle_volume,"Volume système",          "automation", ["volume","son"])
         self.registry.register("TAKE_SCREENSHOT",   system.handle_screenshot,"Capture d'écran",    "automation", ["capture","screenshot"])
+        self.registry.register("GET_SYSTEM_STATUS", system.handle_status,    "État du système",    "system",     ["système","cpu","ram","batterie"])
         self.registry.register("SYSTEM_SHUTDOWN",   system.handle_shutdown,"Arrêt PC",              "automation", ["éteins","arrête l'ordinateur"], requires=["shutdown"])
         self.registry.register("WRITE_DOCUMENT",    word.handle,        "Créer un document Word",  "automation", ["écris","rédige","document"])
         self.registry.register("OPEN_BROWSER",      browser.handle,     "Navigateur web",          "automation", ["navigateur","site"])
@@ -232,8 +233,11 @@ class AssistantEngine:
 
         # Synchronisation avec l'ancien TaskRouter (compatibilité)
         for action in self.registry.list_all():
-            self.router.register(action["name"],
-                lambda e, c, n=action["name"]: self.registry.execute(n, e, c))
+            self.router.register(
+                action["name"],
+                lambda entities=None, context=None, n=action["name"]:
+                    self.registry.execute(n, entities, context)
+            )
 
         # Fallback IA
         self.router.set_fallback(self._ai_fallback)
@@ -268,7 +272,13 @@ class AssistantEngine:
 
     def _voice_cycle(self) -> None:
         self.state.set_status(AssistantStatus.LISTENING)
-        text = self.recognizer.listen()
+        try:
+            text = self.recognizer.listen()
+        except Exception as e:
+            logger.warning(f"Voix indisponible, bascule en CLI : {e}")
+            self._voice_enabled = False
+            self.speak("Le microphone n'est pas disponible. Je passe en mode clavier.")
+            return
         if text:
             self.bus.publish("user_spoke", text)
             self.process_input(text)
@@ -278,6 +288,9 @@ class AssistantEngine:
         try:
             text = input(f"\n[{self.name}] → ").strip()
             if text:
+                if text.lower() in ("quitter", "quit", "exit", "au revoir"):
+                    self._running = False
+                    return
                 self.process_input(text)
         except EOFError:
             self._running = False

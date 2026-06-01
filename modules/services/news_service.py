@@ -3,11 +3,20 @@ CHARAMOU AI - Service actualités
 Via NewsAPI (clé gratuite) + RSS fallback.
 """
 import os
-import requests
 from typing import List, Dict
 from core.logger import setup_logger
 
 logger = setup_logger("NewsService")
+
+if "requests" not in globals():
+    try:
+        import requests
+    except ImportError:
+        class _MissingRequests:
+            def get(self, *args, **kwargs):
+                raise RuntimeError("requests non installé")
+
+        requests = _MissingRequests()
 
 
 class NewsService:

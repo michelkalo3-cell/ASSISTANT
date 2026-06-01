@@ -5,12 +5,24 @@ Stratégies cloud/local/hybride.
 """
 import json
 import os
-import requests
 from typing import List, Dict, Optional
 from core.logger import setup_logger
 from core.exceptions import OllamaError, ModelNotAvailableError
 
 logger = setup_logger("LocalModel_AI")
+
+if "requests" not in globals():
+    try:
+        import requests
+    except ImportError:
+        class _MissingRequests:
+            def get(self, *args, **kwargs):
+                raise RuntimeError("requests non installé")
+
+            def post(self, *args, **kwargs):
+                raise RuntimeError("requests non installé")
+
+        requests = _MissingRequests()
 
 OLLAMA_BASE_URL = "http://localhost:11434"
 

@@ -3,13 +3,26 @@ CHARAMOU AI - Service météo
 Via OpenWeatherMap API (gratuit).
 """
 import os
-import requests
 from typing import Dict, Any, Optional
 from modules.nlp.response_generator import ResponseGenerator
 from core.logger import setup_logger
 from core.exceptions import WeatherServiceError
 
 logger = setup_logger("WeatherService")
+
+if "requests" not in globals():
+    try:
+        import requests
+    except ImportError:
+        class _MissingRequests:
+            class exceptions:
+                ConnectionError = ConnectionError
+
+            def get(self, *args, **kwargs):
+                raise RuntimeError("requests non installé")
+
+        requests = _MissingRequests()
+
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 DEFAULT_CITY = "Paris"
 

@@ -5,11 +5,20 @@ Via DuckDuckGo (sans clé API requise) + fallback navigateur.
 import re
 import webbrowser
 import urllib.parse
-import requests
 from typing import List, Dict
 from core.logger import setup_logger
 
 logger = setup_logger("SearchService")
+
+if "requests" not in globals():
+    try:
+        import requests
+    except ImportError:
+        class _MissingRequests:
+            def get(self, *args, **kwargs):
+                raise RuntimeError("requests non installé")
+
+        requests = _MissingRequests()
 
 
 class SearchService:

@@ -3,10 +3,19 @@ CHARAMOU AI - Service de traduction multilingue
 Via MyMemory API (gratuit, sans clé) + googletrans.
 """
 import re
-import requests
 from core.logger import setup_logger
 
 logger = setup_logger("TranslationService")
+
+if "requests" not in globals():
+    try:
+        import requests
+    except ImportError:
+        class _MissingRequests:
+            def get(self, *args, **kwargs):
+                raise RuntimeError("requests non installé")
+
+        requests = _MissingRequests()
 
 LANG_MAP = {
     "anglais":   "en", "français": "fr", "espagnol": "es",
