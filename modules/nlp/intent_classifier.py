@@ -119,6 +119,7 @@ class EntityExtractor:
         nums = self._NUMBER_PATTERN.findall(text)
         if nums:
             entities["numbers"] = [int(n) for n in nums]
+            entities["value"] = int(nums[0])  # Utiliser le premier nombre comme valeur par défaut
 
         if intent == "GET_WEATHER":
             c = self._CITY_PATTERN.search(text)

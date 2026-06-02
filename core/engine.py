@@ -72,6 +72,16 @@ class AssistantEngine:
 
         logger.info(f"AssistantEngine v2 '{self.name}' créé.")
 
+    def _start_api(self) -> None:
+        """Lance l'API REST/WS si activée."""
+        if self.config.get("api_enabled", True):
+            try:
+                from interfaces.api.server import start_api
+                start_api(self, port=self.config.get("api_port", 8000))
+                logger.info(f"✅ API REST/WebSocket sur le port {self.config.get('api_port', 8000)}")
+            except Exception as e:
+                logger.warning(f"⚠️  API : {e}")
+
     # ────────────────────────────────────────────────────────────────────────
     # Démarrage
     # ────────────────────────────────────────────────────────────────────────
@@ -86,6 +96,7 @@ class AssistantEngine:
         self._register_routes()
         self._subscribe_events()
         self._register_health_checks()
+        self._start_api()
 
         self.scheduler.start()
         self.health.start()

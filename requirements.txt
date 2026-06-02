@@ -46,6 +46,7 @@ pdfplumber>=0.10.0         # [OPT]   Lecture PDF (meilleure qualité)
 # xlrd>=2.0.1              # [OPT]   Lecture .xls (ancien format)
 
 # ── Services & API ────────────────────────────────────────────
+spotipy>=2.23.0            # [OPT]   Contrôle Spotify
 google-auth>=2.28.0        # [OPT]   Google Calendar
 google-auth-oauthlib>=1.2.0
 google-api-python-client>=2.120.0
@@ -60,9 +61,11 @@ SQLAlchemy>=2.0.28         # [OPT]   ORM base de données
 # ── Interface ────────────────────────────────────────────────
 customtkinter>=5.2.2       # [REQUIS] GUI Dashboard Jarvis
 rich>=13.7.1               # [OPT]   CLI coloré amélioré
-fastapi>=0.110.0           # [OPT]   API REST
-uvicorn>=0.28.0            # [OPT]   Serveur API
-websockets>=12.0           # [OPT]   Temps réel
+fastapi>=0.110.0           # [REQUIS] API REST
+uvicorn>=0.28.0            # [REQUIS] Serveur API
+websockets>=12.0           # [REQUIS] Temps réel
+sentence-transformers>=2.5.0 # [OPT] Embeddings neuronaux de qualité
+faiss-cpu>=1.7.4           # [OPT] Recherche sémantique ultra-rapide
 
 # ── Notifications Windows ─────────────────────────────────────
 win10toast>=0.9            # [OPT]   Notifications bureau Windows

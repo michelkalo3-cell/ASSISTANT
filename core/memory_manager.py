@@ -175,34 +175,70 @@ class FAISSIndex(SemanticBackend):
 
     def __init__(self):
         import faiss, numpy as np
-        self._dim     = 128
+        self._dim     = 384  # Dimension standard pour all-MiniLM-L6-v2
         self._index   = faiss.IndexFlatIP(self._dim)
         self._ids:    List[str]  = []
         self._metas:  List[dict] = []
-        self._vectorizer = self._make_vectorizer()
-        logger.info("FAISS index initialisé.")
+        self._lock    = threading.Lock()
+        self._model   = None
+        
+        try:
+            from sentence_transformers import SentenceTransformer
+            self._model = SentenceTransformer('all-MiniLM-L6-v2')
+            logger.info("FAISS index initialisé avec sentence-transformers ✅")
+        except ImportError:
+            self._dim = 128
+            self._index = faiss.IndexFlatIP(self._dim)
+            self._vocab: Dict[str, int] = {}
+            logger.info("FAISS index : sentence-transformers non trouvé, mode basique actif.")
 
-    def _make_vectorizer(self):
-        """Vectoriseur TF simple pour FAISS (remplaçable par sentence-transformers)."""
-        from sklearn.feature_extraction.text import TfidfVectorizer
-        from sklearn.decomposition import TruncatedSVD
+    def _get_vector(self, text: str) -> "np.ndarray":
         import numpy as np
-        self._sklearn_docs = []
-        self._tfidf = TfidfVectorizer(max_features=self._dim)
-        self._svd   = TruncatedSVD(n_components=self._dim)
-        self._fitted = False
+        if self._model:
+            return self._model.encode([text]).astype('float32')
+        
+        # Fallback basique si pas de model
+        tokens = re.findall(r'\w+', text.lower())
+        vec = np.zeros(self._dim, dtype='float32')
+        for t in tokens:
+            if hasattr(self, '_vocab') and t in self._vocab:
+                vec[self._vocab[t] % self._dim] += 1
+        norm = np.linalg.norm(vec)
+        if norm > 0: vec /= norm
+        return vec.reshape(1, -1)
 
     def add(self, doc_id: str, text: str, metadata: dict = None) -> None:
-        # FAISS nécessite sentence-transformers pour de vrais embeddings.
-        # On fallback vers TF-IDF pour éviter la dépendance lourde.
-        self._ids.append(doc_id)
-        self._metas.append(metadata or {})
+        import numpy as np
+        with self._lock:
+            # Update vocab if needed (very basic)
+            tokens = re.findall(r'\w+', text.lower())
+            for t in tokens:
+                if t not in self._vocab: self._vocab[t] = len(self._vocab)
+            
+            vec = self._get_vector(text)
+            self._index.add(vec)
+            self._ids.append(doc_id)
+            self._metas.append(metadata or {})
 
     def search(self, query: str, top_k: int = 5) -> List[Tuple[str, float, dict]]:
-        return []
+        import numpy as np
+        if len(self._ids) == 0: return []
+        with self._lock:
+            vec = self._get_vector(query)
+            scores, indices = self._index.search(vec, min(top_k, len(self._ids)))
+            
+            results = []
+            for score, idx in zip(scores[0], indices[0]):
+                if idx != -1 and idx < len(self._ids):
+                    results.append((self._ids[idx], float(score), self._metas[idx]))
+            return results
 
     def __len__(self) -> int:
         return len(self._ids)
+
+    def close(self) -> None:
+        # FAISS index memory management is automatic in Python
+        pass
 
 
 # ─────────────────────────────────────────────────────────────────────────────

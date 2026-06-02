@@ -83,6 +83,12 @@ class PluginManager:
             plugin_instance: BasePlugin = module.Plugin(engine=self.engine)
             if plugin_instance.setup():
                 self._plugins[plugin_name] = plugin_instance
+                
+                # Enregistrement automatique des routes si le moteur est présent
+                if self.engine and hasattr(self.engine, "router"):
+                    plugin_instance.register_routes(self.engine.router)
+                    logger.debug(f"Routes du plugin '{plugin_name}' enregistrées.")
+
                 logger.info(f"Plugin chargé : '{plugin_name}' v{plugin_instance.version}")
                 return True
             else:

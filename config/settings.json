@@ -20,5 +20,7 @@
   "cache_ttl_seconds": 300,
   "rag_enabled": true,
   "semantic_search_enabled": true,
-  "health_check_interval_seconds": 30
+  "health_check_interval_seconds": 30,
+  "api_enabled": true,
+  "api_port": 8000
 }

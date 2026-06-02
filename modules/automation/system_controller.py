@@ -147,14 +147,24 @@ class SystemController:
             logger.debug(f"Ajustement volume : {e}")
 
     def _set_volume(self, level: int) -> None:
+        """Règle le volume via pycaw (Windows)."""
         try:
-            if platform.system() == "Windows":
-                subprocess.run(
-                    ["nircmd.exe", "setsysvolume", str(int(level * 655.35))],
-                    capture_output=True
-                )
+            from ctypes import cast, POINTER
+            from comtypes import CLSCTX_ALL
+            from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+            
+            devices = AudioUtilities.GetSpeakers()
+            interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+            volume = cast(interface, POINTER(IAudioEndpointVolume))
+            
+            # pycaw utilise une échelle de 0.0 à 1.0 (ou dB)
+            # On utilise scalar value (0.0 à 1.0)
+            volume.SetMasterVolumeLevelScalar(level / 100.0, None)
+            logger.info(f"Volume réglé à {level}% via pycaw.")
+        except ImportError:
+            logger.warning("pycaw non installé. Impossible de régler le volume précisément.")
         except Exception as e:
-            logger.debug(f"Set volume : {e}")
+            logger.error(f"Erreur réglage volume : {e}")
 
     # ────────────────────────────────────────────────────────────────────────
     # Capture d'écran

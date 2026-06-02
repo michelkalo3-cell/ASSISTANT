@@ -29,8 +29,24 @@
       "examples": ["lis mes emails", "vérifie mes mails"]
     },
     "PLAY_MUSIC": {
-      "keywords": ["musique", "joue", "écouter", "spotify"],
-      "examples": ["joue de la musique", "lance Spotify"]
+      "keywords": ["musique", "joue", "écouter", "spotify", "met"],
+      "examples": ["joue de la musique", "lance Spotify", "met du jazz"]
+    },
+    "PAUSE_MUSIC": {
+      "keywords": ["pause", "arrête la musique", "stop la musique"],
+      "examples": ["met en pause", "arrête la musique"]
+    },
+    "NEXT_MUSIC": {
+      "keywords": ["suivant", "titre suivant", "chanson suivante"],
+      "examples": ["passe au suivant", "chanson suivante"]
+    },
+    "PREV_MUSIC": {
+      "keywords": ["précédent", "titre précédent", "chanson précédente"],
+      "examples": ["titre précédent", "reviens en arrière"]
+    },
+    "GET_CURRENT_TRACK": {
+      "keywords": ["en cours", "quel titre", "quelle chanson", "qui chante"],
+      "examples": ["c'est quoi ce titre", "qui chante"]
     },
     "SYSTEM_VOLUME": {
       "keywords": ["volume", "son", "silence", "muet", "monte", "baisse"],

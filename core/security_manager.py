@@ -90,15 +90,20 @@ class CommandValidator:
 
     def validate_file_path(self, path: str) -> bool:
         """Refuse les chemins système dangereux."""
-        dangerous_prefixes = [
-            "C:\\Windows\\System32", "C:\\Windows\\System",
-            "/etc/", "/bin/", "/sbin/", "/usr/bin/",
-            "C:\\Program Files\\Common"
-        ]
-        for prefix in dangerous_prefixes:
-            if path.lower().startswith(prefix.lower()):
-                raise CommandBlockedError(f"Accès refusé : chemin système protégé.")
-        return True
+        try:
+            resolved_path = str(Path(path).resolve()).lower()
+            dangerous_prefixes = [
+                "c:\\windows\\system32", "c:\\windows\\system",
+                "/etc/", "/bin/", "/sbin/", "/usr/bin/",
+                "c:\\program files\\common"
+            ]
+            for prefix in dangerous_prefixes:
+                if resolved_path.startswith(prefix.lower()):
+                    raise CommandBlockedError(f"Accès refusé : chemin système protégé ({prefix}).")
+            return True
+        except Exception as e:
+            if isinstance(e, CommandBlockedError): raise
+            raise SecurityError(f"Erreur validation chemin : {e}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

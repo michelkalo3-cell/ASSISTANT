@@ -49,11 +49,22 @@ class CharamouDashboard:
                 from core.engine import AssistantEngine
                 self.engine = AssistantEngine()
                 self.engine._voice_enabled = False
+                
+                # Initialisation complète (similaire à engine.start() sans la boucle bloquante)
                 self.engine._init_modules()
                 self.engine._init_agents()
                 self.engine._register_routes()
+                self.engine._subscribe_events()
+                self.engine._register_health_checks()
+
+                self.engine.scheduler.start()
+                self.engine.health.start()
+                self.engine.plugins.load_all()
+                
                 self.root.after(0, self._on_ready)
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 self.root.after(0, lambda: self._set_status(f"ERREUR : {str(e)[:40]}", self.C["err"]))
         threading.Thread(target=_init, daemon=True).start()
 
